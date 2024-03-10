@@ -2,6 +2,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{
     Deserialize,
     Deserializer,
+    Serializer,
     de::{self, Visitor},
 };
 use anyhow::Result;
@@ -64,4 +65,29 @@ where
     }
 
     deserializer.deserialize_any(F64Visitor)
+}
+
+pub fn deserialize_option_f64<'de, D>(deserializer: D) -> Result<Option<f64>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: Option<String> = Option::deserialize(deserializer)?;
+    match s {
+        Some(s) => {
+            if s.is_empty() {
+                Ok(None)
+            } else {
+                s.parse::<f64>().map(Some).map_err(serde::de::Error::custom)
+            }
+        }
+        None => Ok(None),
+    }
+}
+
+pub fn serialize_as_string<T, S>(value: &T, serializer: S) -> Result<S::Ok, S::Error>
+where
+    T: ToString,
+    S: Serializer,
+{
+    serializer.serialize_str(&value.to_string())
 }

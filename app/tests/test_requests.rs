@@ -1,10 +1,23 @@
 mod common;
 use anyhow::Result;
-use rsgmo::v1::api::public::{
-    get_ticker::GetTickerParameters,
-    get_orderbooks::GetOrderbooksParameters,
-    get_trades::GetTradesParameters,
-    get_klines::GetKlinesParameters,
+use rsgmo::v1::api::{
+    private::{
+        get_account_deposit_history::GetDepositHistoryParameters,
+        get_account_fiat_deposit_history::GetFiatDepositHistoryParameters,
+        get_account_withdrawal_history::GetWithdrawalHistoryParameters,
+        get_active_orders::GetActiveOrdersParameters,
+        get_orders::GetOrdersParameters,
+        get_executions::GetExecutionsParameters,
+        get_latest_executions::GetLatestExecutionsParameters,
+        get_open_positions::GetOpenPositionsParameters,
+        get_position_summary::GetPositionSummaryParameters,
+        // post_account_transfer::PostAccountTransferParameters
+    }, public::{
+        get_klines::GetKlinesParameters,
+        get_orderbooks::GetOrderbooksParameters,
+        get_ticker::GetTickerParameters,
+        get_trades::GetTradesParameters
+    }
 };
 
 #[tokio::test]
@@ -20,6 +33,7 @@ async fn test_authenticated_get_requests() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
 
@@ -36,6 +50,7 @@ async fn test_public_requests() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
 
@@ -53,6 +68,7 @@ async fn test_get_ticker() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
 
@@ -70,6 +86,7 @@ async fn test_get_orderbooks() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
 
@@ -87,6 +104,7 @@ async fn test_get_trades() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
 
@@ -105,6 +123,7 @@ async fn test_get_klines() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
 
@@ -122,5 +141,243 @@ async fn test_get_symbols() -> Result<()> {
             panic!("Error: {:?}", e);
         }
     }
+    common::delay_for_a_while().await;
     Ok(())
 }
+
+#[tokio::test]
+async fn test_get_account_assets() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_account_assets().await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_account_trading_volume() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_account_trading_volume().await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_account_fiat_deposit_history() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_account_fiat_deposit_history(GetFiatDepositHistoryParameters::new("2022-01-02T00:00:00.000Z")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+// ドキュメント上では存在するか、実際にリクエストを送ると404エラーとなる
+// https://api.coin.z.com/docs/#fiatWithdrawalHistory
+// #[tokio::test]
+// async fn test_get_account_fiat_withdrawal_history() -> Result<()> {
+//     let api = common::setup_api_private();
+
+//     let result = api.get_account_fiat_withdrawal_history(GetFiatWithdrawalHistoryParameters::new("2022-01-02T00:00:00.000Z")).await;
+//     match result {
+//         Ok(response) => {
+//             println!("{:?}", response);
+//             assert_eq!(response.status(), 0);
+//         }
+//         Err(e) => {
+//             panic!("Error: {:?}", e);
+//         }
+//     }
+//     Ok(())
+// }
+
+#[tokio::test]
+async fn test_get_account_deposit_history() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_account_deposit_history(GetDepositHistoryParameters::new("BTC", "2022-01-02T00:00:00.000Z")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_account_withdrawal_history() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_account_withdrawal_history(GetWithdrawalHistoryParameters::new("BTC", "2022-01-02T00:00:00.000Z")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_orders() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_orders(GetOrdersParameters::new("123456789")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_active_orders() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_active_orders(GetActiveOrdersParameters::new("BTC")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_executions() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_executions(GetExecutionsParameters::new().with_order_id("123456789")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_latest_executions() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_latest_executions(GetLatestExecutionsParameters::new("BTC")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_open_positions() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_open_positions(GetOpenPositionsParameters::new("BTC_JPY")).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_get_position_summary() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.get_position_summary(GetPositionSummaryParameters::new()).await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}
+
+// テストを通すにはFX口座が必要
+// また一度リクエストを送ると3分以上経過しないと再度リクエストを送ることができない。（too many requestとなる）
+// #[tokio::test]
+// async fn test_post_account_transfer() -> Result<()> {
+//     let api = common::setup_api_private();
+
+//     let result = api.post_account_transfer(PostAccountTransferParameters::new(100.0, "DEPOSIT")).await;
+//     match result {
+//         Ok(response) => {
+//             println!("{:?}", response);
+//             assert_eq!(response.status(), 0);
+//         }
+//         Err(e) => {
+//             panic!("Error: {:?}", e);
+//         }
+//     }
+//     common::delay_for_a_while().await;
+//     Ok(())
+// }

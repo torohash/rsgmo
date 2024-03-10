@@ -6,7 +6,7 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use ring::hmac;
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{de::DeserializeOwned, Serialize, Deserialize};
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde_json::Value;
 
@@ -40,7 +40,7 @@ impl GmoApi {
         self.deserialzie_response(&body)
     }
 
-    async fn _post<T: Serialize + Clone, P: DeserializeOwned>(&self, path: &str, parameters: Option<T>, access_level: AccessLevel) -> Result<P> {
+    async fn post<T: Serialize + Clone, P: DeserializeOwned>(&self, path: &str, parameters: Option<T>, access_level: AccessLevel) -> Result<P> {
         let body = self.send_request(RequestMethod::POST, path, parameters, access_level).await?;
         self.deserialzie_response(&body)
     }
@@ -118,7 +118,6 @@ impl Request for GmoApi {
             },
         };
 
-
         match response.status().as_u16() {
             200 => {
                 let body = response.text().await?;
@@ -126,8 +125,9 @@ impl Request for GmoApi {
             },
             _ => {
                 Err(anyhow!(format!(
-                    "Request error status code {}",
+                    "Request error status code {}: response details: {:?}",
                     response.status().as_u16(),
+                    response.text().await?
                 )))
             },
         }
@@ -150,5 +150,21 @@ impl Request for GmoApi {
                 Err(anyhow!("Response error {}", response))
             },
         }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Pagination {
+    current_page: i32,
+    count: i32,
+}
+
+impl Pagination {
+    pub fn current_page(&self) -> i32 {
+        self.current_page
+    }
+    pub fn count(&self) -> i32 {
+        self.count
     }
 }

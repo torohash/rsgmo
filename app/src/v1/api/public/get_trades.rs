@@ -1,5 +1,5 @@
 use crate::{
-    v1::api::GmoApi,
+    v1::api::{GmoApi, Pagination},
     request::AccessLevel,
     utils,
 };
@@ -73,22 +73,6 @@ impl TradesData {
     }
     pub fn list(&self) -> &Vec<Trade> {
         &self.list
-    }
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Pagination {
-    current_page: i32,
-    count: i32,
-}
-
-impl Pagination {
-    pub fn current_page(&self) -> i32 {
-        self.current_page
-    }
-    pub fn count(&self) -> i32 {
-        self.count
     }
 }
 

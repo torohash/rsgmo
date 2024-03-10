@@ -1,1 +1,14 @@
 pub mod get_account_margin;
+pub mod get_account_assets;
+pub mod get_account_trading_volume;
+pub mod get_account_fiat_deposit_history;
+pub mod get_account_fiat_withdrawal_history;
+pub mod get_account_deposit_history;
+pub mod get_account_withdrawal_history;
+pub mod get_orders;
+pub mod get_active_orders;
+pub mod get_executions;
+pub mod get_latest_executions;
+pub mod get_open_positions;
+pub mod get_position_summary;
+pub mod post_account_transfer;
