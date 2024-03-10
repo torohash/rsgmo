@@ -24,7 +24,7 @@ impl fmt::Display for RequestMethod {
 pub trait Request: Auth {
     fn build_headers<T: Serialize>(&self, timestamp: u64, method: RequestMethod, path: &str, parameters: Option<T>) -> Result<HeaderMap>;
     fn send_request<T: Serialize + Clone>(&self, method: RequestMethod, path: &str, parameters: Option<T>, access_level: AccessLevel) -> impl Future<Output = Result<String>>;
-    fn deserialzie_response<P: DeserializeOwned>(&self, body: &str) -> Result<P>;
+    fn deserialize_response<P: DeserializeOwned>(&self, body: &str) -> Result<P>;
 }
 
 pub enum AccessLevel {

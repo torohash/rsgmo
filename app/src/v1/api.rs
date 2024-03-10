@@ -37,12 +37,12 @@ impl GmoApi {
 
     async fn get<T: Serialize + Clone, P: DeserializeOwned>(&self, path: &str, parameters: Option<T>, access_level: AccessLevel) -> Result<P> {
         let body = self.send_request(RequestMethod::GET, path, parameters, access_level).await?;
-        self.deserialzie_response(&body)
+        self.deserialize_response(&body)
     }
 
     async fn post<T: Serialize + Clone, P: DeserializeOwned>(&self, path: &str, parameters: Option<T>, access_level: AccessLevel) -> Result<P> {
         let body = self.send_request(RequestMethod::POST, path, parameters, access_level).await?;
-        self.deserialzie_response(&body)
+        self.deserialize_response(&body)
     }
 }
 
@@ -132,7 +132,7 @@ impl Request for GmoApi {
             },
         }
     }
-    fn deserialzie_response<P: serde::de::DeserializeOwned>(&self, body: &str) -> Result<P> {
+    fn deserialize_response<P: serde::de::DeserializeOwned>(&self, body: &str) -> Result<P> {
         let response: Value = serde_json::from_str(body)?;
 
         let status = response.get("status").and_then(Value::as_i64);
