@@ -91,3 +91,14 @@ where
 {
     serializer.serialize_str(&value.to_string())
 }
+
+pub fn serialize_option_as_string<T, S>(option: &Option<T>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    T: ToString,
+    S: Serializer,
+{
+    match option {
+        Some(value) => serializer.serialize_str(&value.to_string()),
+        None => serializer.serialize_none(),
+    }
+}

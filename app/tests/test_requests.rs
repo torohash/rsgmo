@@ -12,6 +12,7 @@ use rsgmo::v1::api::{
         get_open_positions::GetOpenPositionsParameters,
         get_position_summary::GetPositionSummaryParameters,
         // post_account_transfer::PostAccountTransferParameters
+        // post_order::PostOrderParameters
     }, public::{
         get_klines::GetKlinesParameters,
         get_orderbooks::GetOrderbooksParameters,
@@ -369,6 +370,27 @@ async fn test_get_position_summary() -> Result<()> {
 //     let api = common::setup_api_private();
 
 //     let result = api.post_account_transfer(PostAccountTransferParameters::new(100.0, "DEPOSIT")).await;
+//     match result {
+//         Ok(response) => {
+//             println!("{:?}", response);
+//             assert_eq!(response.status(), 0);
+//         }
+//         Err(e) => {
+//             panic!("Error: {:?}", e);
+//         }
+//     }
+//     common::delay_for_a_while().await;
+//     Ok(())
+// }
+
+// #[tokio::test]
+// async fn test_post_order() -> Result<()> {
+//     let api = common::setup_api_private();
+
+//     let result = api.post_order(
+//         PostOrderParameters::new("BTC_JPY", "BUY", "LIMIT", 0.01)
+//             .with_price(8_000_000.0)
+//     ).await;
 //     match result {
 //         Ok(response) => {
 //             println!("{:?}", response);
