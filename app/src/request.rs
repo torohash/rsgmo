@@ -10,6 +10,8 @@ use crate::auth::Auth;
 pub enum RequestMethod {
     GET,
     POST,
+    PUT,
+    DELETE,
 }
 
 impl fmt::Display for RequestMethod {
@@ -17,6 +19,8 @@ impl fmt::Display for RequestMethod {
         match *self {
             RequestMethod::GET => write!(f, "GET"),
             RequestMethod::POST => write!(f, "POST"),
+            RequestMethod::PUT => write!(f, "PUT"),
+            RequestMethod::DELETE => write!(f, "DELETE"),
         }
     }
 }

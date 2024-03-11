@@ -13,6 +13,8 @@ use rsgmo::v1::api::{
         get_position_summary::GetPositionSummaryParameters,
         // post_account_transfer::PostAccountTransferParameters
         // post_order::PostOrderParameters
+        put_ws_auth::PutWsAuthParameters,
+        delete_ws_auth::DeleteWsAuthParameters,
     }, public::{
         get_klines::GetKlinesParameters,
         get_orderbooks::GetOrderbooksParameters,
@@ -403,3 +405,44 @@ async fn test_get_position_summary() -> Result<()> {
 //     common::delay_for_a_while().await;
 //     Ok(())
 // }
+
+#[tokio::test]
+async fn test_ws_auth() -> Result<()> {
+    let api = common::setup_api_private();
+
+    let result = api.post_ws_auth().await;
+    match result {
+        Ok(response) => {
+            println!("{:?}", response);
+            assert_eq!(response.status(), 0);
+
+            let result = api.put_ws_auth(PutWsAuthParameters::new(response.data())).await;
+            match result {
+                Ok(response) => {
+                    println!("{:?}", response);
+                    assert_eq!(response.status(), 0);
+                }
+                Err(e) => {
+                    panic!("Error: {:?}", e);
+                }
+            }
+
+            let result = api.delete_ws_auth(DeleteWsAuthParameters::new(response.data())).await;
+            match result {
+                Ok(response) => {
+                    println!("{:?}", response);
+                    assert_eq!(response.status(), 0);
+                }
+                Err(e) => {
+                    panic!("Error: {:?}", e);
+                }
+            }
+
+        }
+        Err(e) => {
+            panic!("Error: {:?}", e);
+        }
+    }
+    common::delay_for_a_while().await;
+    Ok(())
+}

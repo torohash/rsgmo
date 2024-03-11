@@ -20,3 +20,6 @@ pub mod post_cancel_bulk_order;
 pub mod post_close_order;
 pub mod post_close_bulk_order;
 pub mod post_change_losscut_price;
+pub mod post_ws_auth;
+pub mod put_ws_auth;
+pub mod delete_ws_auth;

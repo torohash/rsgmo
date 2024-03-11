@@ -44,6 +44,17 @@ impl GmoApi {
         let body = self.send_request(RequestMethod::POST, path, parameters, access_level).await?;
         self.deserialize_response(&body)
     }
+
+    async fn put<T: Serialize + Clone, P: DeserializeOwned>(&self, path: &str, parameters: Option<T>, access_level: AccessLevel) -> Result<P> {
+        let body = self.send_request(RequestMethod::PUT, path, parameters, access_level).await?;
+        println!("body: {:?}", body);
+        self.deserialize_response(&body)
+    }
+
+    async fn delete<T: Serialize + Clone, P: DeserializeOwned>(&self, path: &str, parameters: Option<T>, access_level: AccessLevel) -> Result<P> {
+        let body = self.send_request(RequestMethod::DELETE, path, parameters, access_level).await?;
+        self.deserialize_response(&body)
+    }
 }
 
 impl Auth for GmoApi {
@@ -68,6 +79,8 @@ impl Auth for GmoApi {
                 let parameters_json = serde_json::to_string(&parameters)?;
                 format!("{}{}{}{}", timestamp, method, path, parameters_json)
             },
+            RequestMethod::PUT => format!("{}{}{}", timestamp, method, path),
+            RequestMethod::DELETE => format!("{}{}{}", timestamp, method, path),
         };
         let signed_key = hmac::Key::new(hmac::HMAC_SHA256, api_secret.as_bytes());
         let signature = hex::encode(hmac::sign(&signed_key, message.as_bytes()).as_ref());
@@ -111,10 +124,15 @@ impl Request for GmoApi {
             },
             RequestMethod::POST => {
                 let headers = self.build_headers(timestamp, method, path, parameters.clone())?;
-                match parameters {
-                    Some(parameters) => client.post(&url).headers(headers).json(&parameters).send().await?,
-                    None => client.post(&url).headers(headers).send().await?,
-                }
+                client.post(&url).headers(headers).json(&parameters).send().await?
+            },
+            RequestMethod::PUT => {
+                let headers = self.build_headers(timestamp, method, path, parameters.clone())?;
+                client.put(&url).headers(headers).json(&parameters).send().await?
+            },
+            RequestMethod::DELETE => {
+                let headers = self.build_headers(timestamp, method, path, parameters.clone())?;
+                client.delete(&url).headers(headers).json(&parameters).send().await?
             },
         };
 

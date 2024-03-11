@@ -21,5 +21,5 @@ pub fn get_today() -> String {
 }
 
 pub async fn delay_for_a_while() {
-    sleep(Duration::from_millis(250)).await;
+    sleep(Duration::from_millis(400)).await;
 }
