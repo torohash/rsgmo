@@ -31,6 +31,7 @@ pub trait Request: Auth {
     fn deserialize_response<P: DeserializeOwned>(&self, body: &str) -> Result<P>;
 }
 
+#[derive(Debug, Clone)]
 pub enum AccessLevel {
     Public,
     Private,

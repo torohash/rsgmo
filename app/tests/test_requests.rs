@@ -23,6 +23,14 @@ use rsgmo::v1::api::{
     }
 };
 
+use rsgmo::v1::ws::{
+    public::connect_ticker::ConnectTickerParameters,
+    public::connect_ticker::ConnectTickerResponse,
+    Channel,
+    CommandType,
+};
+use futures::stream::StreamExt;
+
 #[tokio::test]
 async fn test_authenticated_get_requests() -> Result<()> {
     let api = common::setup_api_private();
@@ -445,4 +453,27 @@ async fn test_ws_auth() -> Result<()> {
     }
     common::delay_for_a_while().await;
     Ok(())
+}
+
+
+
+#[tokio::test]
+async fn test_connect_ticker() {
+    let ws = common::setup_ws_public().await.unwrap();
+    let (_, mut read) = ws.connect_ticker(ConnectTickerParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
+    while let Some(response) = read.next().await {
+        match response {
+            Ok(message) => {
+                let body = message.to_text().unwrap();
+                println!("Received message: {}", body);
+                let res: ConnectTickerResponse = serde_json::from_str(body).unwrap();
+                assert_eq!(res.channel(), Channel::Ticker.to_string());
+                assert_eq!(res.symbol(), "BTC");
+                break;
+            }
+            Err(e) => {
+                panic!("Error: {:?}", e);
+            }
+        }
+    }
 }

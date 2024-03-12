@@ -1,7 +1,11 @@
-use rsgmo::v1::api::GmoApi;
+use rsgmo::{
+    v1::{api::GmoApi, ws::GmoWs},
+    request::AccessLevel,
+};
 use std::env;
 use chrono::{Local, Datelike};
 use tokio::time::{sleep, Duration};
+use anyhow::Result;
 
 pub fn setup_api_private() -> GmoApi {
     let api_key = env::var("API_KEY").expect("API_KEY must be set");
@@ -12,6 +16,13 @@ pub fn setup_api_private() -> GmoApi {
 
 pub fn setup_api_public() -> GmoApi {
     GmoApi::new(None, None)
+}
+
+pub async fn setup_ws_public() -> Result<GmoWs> {
+    let ws = GmoWs::new(AccessLevel::Public);
+    let api = setup_api_private();
+    let access_token = api.post_ws_auth().await?;
+    Ok(ws.with_access_token(access_token.data()))
 }
 
 pub fn get_today() -> String {
