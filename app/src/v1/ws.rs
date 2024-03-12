@@ -52,7 +52,7 @@ impl Connect for GmoWs {
             AccessLevel::Public => format!("{}{}{}", self.base_url, self.access_level, V1_PATH),
             AccessLevel::Private => {
                 match &self.access_token {
-                    Some(token) => format!("{}{}{}{}", self.base_url, self.access_level, V1_PATH, token),
+                    Some(token) => format!("{}{}{}/{}", self.base_url, self.access_level, V1_PATH, token),
                     None => return Err(anyhow::anyhow!("Access token is required for private web socket connections.")),
                 }
             }

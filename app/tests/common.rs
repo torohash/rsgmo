@@ -18,8 +18,13 @@ pub fn setup_api_public() -> GmoApi {
     GmoApi::new(None, None)
 }
 
-pub async fn setup_ws_public() -> Result<GmoWs> {
+pub async fn setup_ws_public() -> GmoWs {
     let ws = GmoWs::new(AccessLevel::Public);
+    ws
+}
+
+pub async fn setup_ws_private() -> Result<GmoWs> {
+    let ws = GmoWs::new(AccessLevel::Private);
     let api = setup_api_private();
     let access_token = api.post_ws_auth().await?;
     Ok(ws.with_access_token(access_token.data()))
@@ -33,4 +38,8 @@ pub fn get_today() -> String {
 
 pub async fn delay_for_a_while() {
     sleep(Duration::from_millis(400)).await;
+}
+
+pub async fn delay_for_a_while_long() {
+    sleep(Duration::from_millis(1500)).await;
 }

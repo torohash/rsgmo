@@ -26,6 +26,11 @@ use rsgmo::v1::api::{
 use rsgmo::v1::ws::{
     public::connect_ticker::ConnectTickerParameters,
     public::connect_ticker::ConnectTickerResponse,
+    public::connect_orderbooks::ConnectOrderbooksParameters,
+    public::connect_orderbooks::ConnectOrderbooksResponse,
+    public::connect_trades::ConnectTradesParameters,
+    public::connect_trades::ConnectTradesResponse,
+    private::connect_execution_events::ConnectExecutionEventsParameters,
     Channel,
     CommandType,
 };
@@ -459,7 +464,7 @@ async fn test_ws_auth() -> Result<()> {
 
 #[tokio::test]
 async fn test_connect_ticker() {
-    let ws = common::setup_ws_public().await.unwrap();
+    let ws = common::setup_ws_public().await;
     let (_, mut read) = ws.connect_ticker(ConnectTickerParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
     while let Some(response) = read.next().await {
         match response {
@@ -476,4 +481,56 @@ async fn test_connect_ticker() {
             }
         }
     }
+    common::delay_for_a_while_long().await;
+}
+
+#[tokio::test]
+async fn test_connect_orderbooks() {
+    let ws = common::setup_ws_public().await;
+    let (_, mut read) = ws.connect_orderbooks(ConnectOrderbooksParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
+    while let Some(response) = read.next().await {
+        match response {
+            Ok(message) => {
+                let body = message.to_text().unwrap();
+                println!("Received message: {}", body);
+                let res: ConnectOrderbooksResponse = serde_json::from_str(body).unwrap();
+                assert_eq!(res.channel(), Channel::Orderbooks.to_string());
+                assert_eq!(res.symbol(), "BTC");
+                break;
+            }
+            Err(e) => {
+                panic!("Error: {:?}", e);
+            }
+        }
+    }
+    common::delay_for_a_while_long().await;
+}
+
+#[tokio::test]
+async fn test_connect_trades() {
+    let ws = common::setup_ws_public().await;
+    let (_, mut read) = ws.connect_trades(ConnectTradesParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
+    while let Some(response) = read.next().await {
+        match response {
+            Ok(message) => {
+                let body = message.to_text().unwrap();
+                println!("Received message: {}", body);
+                let res: ConnectTradesResponse = serde_json::from_str(body).unwrap();
+                assert_eq!(res.channel(), Channel::Trades.to_string());
+                assert_eq!(res.symbol(), "BTC");
+                break;
+            }
+            Err(e) => {
+                panic!("Error: {:?}", e);
+            }
+        }
+    }
+    common::delay_for_a_while_long().await;
+}
+
+#[tokio::test]
+async fn test_connect_execution_events() {
+    let ws = common::setup_ws_private().await.unwrap();
+    let (_, _) = ws.connect_execution_events(ConnectExecutionEventsParameters::new(CommandType::Subscribe)).await.unwrap();
+    common::delay_for_a_while_long().await;
 }
