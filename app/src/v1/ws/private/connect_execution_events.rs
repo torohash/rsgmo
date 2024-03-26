@@ -53,7 +53,7 @@ pub struct ConnectExecutionEventsResponse {
     execution_price: f64,
     #[serde(deserialize_with = "utils::deserialize_f64")]
     execution_size: f64,
-    position_id: i64,
+    position_id: Option<i64>,
     order_timestamp: String,
     execution_timestamp: String,
     #[serde(deserialize_with = "utils::deserialize_f64")]
@@ -98,7 +98,7 @@ impl ConnectExecutionEventsResponse {
     pub fn execution_size(&self) -> f64 {
         self.execution_size
     }
-    pub fn position_id(&self) -> i64 {
+    pub fn position_id(&self) -> Option<i64> {
         self.position_id
     }
     pub fn order_timestamp(&self) -> &str {

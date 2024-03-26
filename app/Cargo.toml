@@ -1,7 +1,12 @@
 [package]
 name = "rsgmo"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+repository = "https://github.com/torohash/rsgmo"
+keywords = ["GMO", "api", "wrapper"]
+description = "GMOコインのRust用APIライブラリ."
+license = "MIT OR Apache-2.0"
+authors = ["torohash <torohash@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
