@@ -32,6 +32,7 @@ pub struct ConnectTradesParameters {
     option: Option<String>,
 }
 
+
 impl ConnectTradesParameters {
     pub fn new(command: CommandType, symbol: &str) -> Self {
         Self {
@@ -40,6 +41,11 @@ impl ConnectTradesParameters {
             symbol: symbol.to_string(),
             option: None,
         }
+    }
+
+    pub fn with_option(mut self, option: &str) -> Self {
+        self.option = Some(option.to_string());
+        self
     }
 }
 
