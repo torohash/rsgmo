@@ -7,26 +7,26 @@ use crate::{
 use anyhow::Result;
 use serde::Deserialize;
 
-const PATH: &str = "/v1/account/assets";
+const PATH: &str = "/v1/account/margin";
 
 impl GmoApi {
-    pub async fn get_account_assets(&self) -> Result<GetAccountAssetsResponse> {
+    pub async fn get_account_margin(&self) -> Result<GetAccountMarginResponse> {
         self.get(PATH, None::<()>, AccessLevel::Private).await
     }
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct GetAccountAssetsResponse {
+pub struct GetAccountMarginResponse {
     status: i32,
-    data: Vec<AccountAssetsData>,
+    data: AccountMarginData,
     responsetime: String,
 }
 
-impl GetAccountAssetsResponse {
+impl GetAccountMarginResponse {
     pub fn status(&self) -> i32 {
         self.status
     }
-    pub fn data(&self) -> &Vec<AccountAssetsData> {
+    pub fn data(&self) -> &AccountMarginData {
         &self.data
     }
     pub fn responsetime(&self) -> &str {
@@ -36,27 +36,37 @@ impl GetAccountAssetsResponse {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct AccountAssetsData {
-    #[serde(deserialize_with = "utils::deserialize_f64")]
-    amount: f64,
-    #[serde(deserialize_with = "utils::deserialize_f64")]
-    available: f64,
-    #[serde(deserialize_with = "utils::deserialize_f64")]
-    conversion_rate: f64,
-    symbol: String,
+pub struct AccountMarginData {
+    #[serde(deserialize_with = "utils::deserialize_string_to_u64")]
+    actual_profit_loss: u64,
+    #[serde(deserialize_with = "utils::deserialize_string_to_u64")]
+    available_amount: u64,
+    #[serde(deserialize_with = "utils::deserialize_string_to_u64")]
+    margin: u64,
+    margin_call_status: String,
+    #[serde(deserialize_with = "utils::deserialize_string_to_u64")]
+    profit_loss: u64,
+    #[serde(deserialize_with = "utils::deserialize_string_to_u64")]
+    transferable_amount: u64,
 }
 
-impl AccountAssetsData {
-    pub fn amount(&self) -> f64 {
-        self.amount
+impl AccountMarginData {
+    pub fn actual_profit_loss(&self) -> u64 {
+        self.actual_profit_loss
     }
-    pub fn available(&self) -> f64 {
-        self.available
+    pub fn available_amount(&self) -> u64 {
+        self.available_amount
     }
-    pub fn conversion_rate(&self) -> f64 {
-        self.conversion_rate
+    pub fn margin(&self) -> u64 {
+        self.margin
     }
-    pub fn symbol(&self) -> &str {
-        &self.symbol
+    pub fn margin_call_status(&self) -> &str {
+        &self.margin_call_status
+    }
+    pub fn profit_loss(&self) -> u64 {
+        self.profit_loss
+    }
+    pub fn transferable_amount(&self) -> u64 {
+        self.transferable_amount
     }
 }
