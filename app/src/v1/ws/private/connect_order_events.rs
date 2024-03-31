@@ -39,7 +39,7 @@ pub struct ConnectOrderEventsResponse {
     execution_type: String,
     side: String,
     order_status: String,
-    cancel_type: String,
+    cancel_type: Option<String>,
     order_timestamp: String,
     #[serde(deserialize_with = "utils::deserialize_f64")]
     order_price: f64,
@@ -75,7 +75,7 @@ impl ConnectOrderEventsResponse {
     pub fn order_status(&self) -> &str {
         &self.order_status
     }
-    pub fn cancel_type(&self) -> &str {
+    pub fn cancel_type(&self) -> &Option<String> {
         &self.cancel_type
     }
     pub fn order_timestamp(&self) -> &str {
