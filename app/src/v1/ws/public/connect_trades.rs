@@ -3,22 +3,12 @@ use crate::{
     connect::Connect,
     utils,
 };
-use tokio_tungstenite::{
-    WebSocketStream,
-    MaybeTlsStream,
-    tungstenite::Message,
-};
-use tokio::net::TcpStream;
-use futures::stream::{SplitSink, SplitStream};
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 impl GmoWs {
-    pub async fn connect_trades(&self, parameters: ConnectTradesParameters) -> Result<(
-        SplitSink<WebSocketStream<MaybeTlsStream<TcpStream>>, Message>,
-        SplitStream<WebSocketStream<MaybeTlsStream<TcpStream>>>
-    )> {
+    pub async fn connect_trades(&self, parameters: ConnectTradesParameters) -> Result<()> {
         self.execute(parameters).await
     }
 }

@@ -465,8 +465,8 @@ async fn test_ws_auth() -> Result<()> {
 #[tokio::test]
 async fn test_connect_ticker() {
     let ws = common::setup_ws_public().await;
-    let (_, mut read) = ws.connect_ticker(ConnectTickerParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
-    while let Some(response) = read.next().await {
+    ws.connect_ticker(ConnectTickerParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
+    while let Some(response) = ws.read().lock().await.next().await {
         match response {
             Ok(message) => {
                 let body = message.to_text().unwrap();
@@ -487,8 +487,8 @@ async fn test_connect_ticker() {
 #[tokio::test]
 async fn test_connect_orderbooks() {
     let ws = common::setup_ws_public().await;
-    let (_, mut read) = ws.connect_orderbooks(ConnectOrderbooksParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
-    while let Some(response) = read.next().await {
+    ws.connect_orderbooks(ConnectOrderbooksParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
+    while let Some(response) = ws.read().lock().await.next().await {
         match response {
             Ok(message) => {
                 let body = message.to_text().unwrap();
@@ -509,8 +509,8 @@ async fn test_connect_orderbooks() {
 #[tokio::test]
 async fn test_connect_trades() {
     let ws = common::setup_ws_public().await;
-    let (_, mut read) = ws.connect_trades(ConnectTradesParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
-    while let Some(response) = read.next().await {
+    ws.connect_trades(ConnectTradesParameters::new(CommandType::Subscribe, "BTC")).await.unwrap();
+    while let Some(response) = ws.read().lock().await.next().await {
         match response {
             Ok(message) => {
                 let body = message.to_text().unwrap();
@@ -531,6 +531,6 @@ async fn test_connect_trades() {
 #[tokio::test]
 async fn test_connect_execution_events() {
     let ws = common::setup_ws_private().await.unwrap();
-    let (_, _) = ws.connect_execution_events(ConnectExecutionEventsParameters::new(CommandType::Subscribe)).await.unwrap();
+    ws.connect_execution_events(ConnectExecutionEventsParameters::new(CommandType::Subscribe)).await.unwrap();
     common::delay_for_a_while_long().await;
 }

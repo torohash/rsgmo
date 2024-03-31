@@ -2,22 +2,12 @@ use crate::{
     v1::ws::{GmoWs, Channel, CommandType},
     connect::Connect,
 };
-use tokio_tungstenite::{
-    WebSocketStream,
-    MaybeTlsStream,
-    tungstenite::Message,
-};
-use tokio::net::TcpStream;
-use futures::stream::{SplitSink, SplitStream};
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 impl GmoWs {
-    pub async fn connect_position_summary_events(&self, parameters: ConnectPositionSummaryEventsParameters) -> Result<(
-        SplitSink<WebSocketStream<MaybeTlsStream<TcpStream>>, Message>,
-        SplitStream<WebSocketStream<MaybeTlsStream<TcpStream>>>
-    )> {
+    pub async fn connect_position_summary_events(&self, parameters: ConnectPositionSummaryEventsParameters) -> Result<()> {
         self.execute(parameters).await
     }
 }

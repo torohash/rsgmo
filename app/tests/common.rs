@@ -19,15 +19,15 @@ pub fn setup_api_public() -> GmoApi {
 }
 
 pub async fn setup_ws_public() -> GmoWs {
-    let ws = GmoWs::new(AccessLevel::Public);
+    let ws = GmoWs::new(AccessLevel::Public, None).await.unwrap();
     ws
 }
 
 pub async fn setup_ws_private() -> Result<GmoWs> {
-    let ws = GmoWs::new(AccessLevel::Private);
     let api = setup_api_private();
     let access_token = api.post_ws_auth().await?;
-    Ok(ws.with_access_token(access_token.data()))
+    let ws = GmoWs::new(AccessLevel::Private, Some(access_token.data().to_string())).await?;
+    Ok(ws)
 }
 
 pub fn get_today() -> String {
