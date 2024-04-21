@@ -71,6 +71,15 @@ pub struct SettlePositionParameter {
     size: f64,
 }
 
+impl SettlePositionParameter {
+    pub fn new(position_id: i64, size: f64) -> Self {
+        Self {
+            position_id,
+            size,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct PostCloseOrderResponse {
     status: i32,
